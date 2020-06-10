@@ -1,4 +1,4 @@
-import React, { ReactNode } from "react";
+import React, { ReactNode, useEffect } from "react";
 import { useState, useRef } from "react";
 import {
   StyleSheet,
@@ -18,17 +18,25 @@ import { generateRandomBetween } from "../utils/generateRandomBetween";
 
 interface Props {
   num: number;
+  gameOver: (guessCount: number) => void;
 }
 
 export const GameScreen = (props: Props) => {
-  const num = props.num;
+  const {num, gameOver} = props;
 
   const [currentGuess, setCurrentGuess] = useState(
     generateRandomBetween(1, 100, num)
   );
+  const [rounds, setRounds] = useState(0);
 
   const currentHigh = useRef(100);
   const currentLow = useRef(1); // Stored detached from the function, same as useState, but the component does not re render
+  useEffect(() => { // runs every time after rendering
+    if (currentGuess == num) {
+      // The user has guessed the game
+      gameOver(currentGuess);
+    }
+  }, [currentGuess, num, gameOver]); // Change only when one of these values change
 
   const nextGuessHandler = (direction: boolean) => {
     if (
@@ -53,8 +61,11 @@ export const GameScreen = (props: Props) => {
       currentHigh.current,
       currentGuess
     );
+    setRounds((rounds) => rounds+1); // increment the number of rounds whenever the user presses one of the buttons, which increases the guess count
     setCurrentGuess(nextNumber);
   };
+
+
   return (
     <View style={styles.screen}>
       <Text style={styles.text}>The Computer's Guess is</Text>

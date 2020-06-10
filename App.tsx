@@ -17,13 +17,17 @@ export default function App() {
   const gameOver = (numOfRounds: number) => {
     setGuessRounds(numOfRounds);
   };
-
+  const restart = () => {
+    setGuessRounds(0);
+    setUserNumber(undefined);
+  }
   let content = <StartGameScreen onStartGame={startGameHandler} />;
-  if (userNumber && guessRounds < 0) {
+  if (userNumber && guessRounds <= 0) {
     // When the computer hasnt started
-    content = <GameScreen num={userNumber} onGameOver={gameOver} />;
-  } else if (userNumber && guessRounds > 0) {
-    content = <GameOverScreen tries={guessRounds} num={userNumber} />;
+    content = <GameScreen num={userNumber} gameOver={gameOver} />;
+  } else if (userNumber && guessRounds >0) {
+    content = <GameOverScreen restart = {restart}
+    tries={guessRounds} num={userNumber} />;
   }
 
   return (
